@@ -1,0 +1,25 @@
+spring:
+  cloud:
+    gateway:
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials, RETAIN_UNIQUE
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowed-origins: "*"
+            allowed-methods: "*"
+            allowed-headers: "*"
+            allow-credentials: true
+      routes:
+        - id: service1
+          uri: http://localhost:10001
+          predicates:
+            - Path=/service1/**
+          filters:
+            - RewritePath=/service1/(?<segment>.*), /$\{segment}
+        - id: service2
+          uri: http://localhost:10002
+          predicates:
+            - Path=/service2/**
+          filters:
+            - RewritePath=/service2/(?<segment>.*), /$\{segment}
